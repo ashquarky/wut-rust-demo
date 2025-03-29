@@ -11,7 +11,7 @@
     "linker-flavor": "ld.lld",
     "linker-is-gnu": false,
     "no-default-libraries": false,
-    "os": "wup-cafe",
+    "os": "cafe",
     "pre-link-args": {
         "ld.lld": [
             "--gc-sections",

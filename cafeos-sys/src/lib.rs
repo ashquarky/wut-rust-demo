@@ -13,9 +13,9 @@
 #[derive(Debug, Copy, Clone)]
 pub struct OSSpinLock {
     pub owner: u32,
-    pub __unk31: [cty::c_char; 4usize],
+    pub __unk31: [core::ffi::c_char; 4usize],
     pub recursion: u32,
-    pub __unk32: [cty::c_char; 4usize],
+    pub __unk32: [core::ffi::c_char; 4usize],
 }
 #[test]
 fn bindgen_test_layout_OSSpinLock() {
@@ -82,14 +82,14 @@ pub struct MEMHeapHeader {
     #[doc = "! List of all child heaps in this heap"]
     pub list: MEMMemoryList,
     #[doc = "! Pointer to start of allocatable memory"]
-    pub dataStart: *mut cty::c_void,
+    pub dataStart: *mut core::ffi::c_void,
     #[doc = "! Pointer to end of allocatable memory"]
-    pub dataEnd: *mut cty::c_void,
+    pub dataEnd: *mut core::ffi::c_void,
     #[doc = "! Lock used when MEM_HEAP_FLAG_USE_LOCK is set."]
     pub lock: OSSpinLock,
     #[doc = "! Flags set during heap creation."]
     pub flags: u32,
-    pub __unk33: [cty::c_char; 12usize],
+    pub __unk33: [core::ffi::c_char; 12usize],
 }
 #[test]
 fn bindgen_test_layout_MEMHeapHeader() {

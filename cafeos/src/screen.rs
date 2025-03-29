@@ -5,7 +5,7 @@ extern crate alloc;
 use alloc::alloc::{alloc_zeroed, dealloc};
 use core::alloc::Layout;
 use core::convert::TryInto;
-
+use core::ffi::c_void;
 use cafeos_sys as ffi;
 
 pub struct OSScreen {
@@ -28,8 +28,8 @@ impl OSScreen {
             let tv_buf = alloc_zeroed(tv_lyt);
             let drc_buf = alloc_zeroed(drc_lyt);
 
-            ffi::OSScreenSetBufferEx(ffi::OSScreenID::SCREEN_TV, tv_buf as *mut cty::c_void);
-            ffi::OSScreenSetBufferEx(ffi::OSScreenID::SCREEN_DRC, drc_buf as *mut cty::c_void);
+            ffi::OSScreenSetBufferEx(ffi::OSScreenID::SCREEN_TV, tv_buf as *mut c_void);
+            ffi::OSScreenSetBufferEx(ffi::OSScreenID::SCREEN_DRC, drc_buf as *mut c_void);
 
             ffi::OSScreenEnableEx(ffi::OSScreenID::SCREEN_TV, 1);
             ffi::OSScreenEnableEx(ffi::OSScreenID::SCREEN_DRC, 1);

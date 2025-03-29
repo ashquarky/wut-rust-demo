@@ -6,19 +6,21 @@ use core::{
     ops::Deref,
     panic::PanicInfo,
 };
-use cty::{c_char, c_void};
+use core::ffi::{c_char, c_void};
+use core::ffi::CStr;
+use core::hint::unreachable_unchecked;
 
 // Default allocator implementation
 pub struct MEMDefaultHeapAllocator;
 
 unsafe impl GlobalAlloc for MEMDefaultHeapAllocator {
     unsafe fn alloc(&self, layout: Layout) -> *mut u8 {
-        cafeos_sys::MEMAllocFromDefaultHeapEx.unwrap()(layout.size() as u32, cmp::max(layout.align() as i32, 4))
-            as *mut u8
+        unsafe { cafeos_sys::MEMAllocFromDefaultHeapEx.unwrap()(layout.size() as u32, cmp::max(layout.align() as i32, 4))
+            as *mut u8 }
     }
 
     unsafe fn dealloc(&self, ptr: *mut u8, _layout: Layout) {
-        cafeos_sys::MEMFreeToDefaultHeap.unwrap()(ptr as *mut c_void);
+        unsafe { cafeos_sys::MEMFreeToDefaultHeap.unwrap()(ptr as *mut c_void); }
     }
 }
 
@@ -58,8 +60,8 @@ impl<A: Array<Item = u8> + Copy> Deref for ArrayCString<A> {
 
 #[panic_handler]
 fn panic_handler(info: &PanicInfo) -> ! {
-    let payload = info.payload();
-    let message = if let Some(s) = payload.downcast_ref::<&str>() {
+    let payload = info.message();
+    let message = if let Some(s) = payload.as_str() {
         s
     } else {
         "Unhandled rust panic payload!"
@@ -77,18 +79,21 @@ fn panic_handler(info: &PanicInfo) -> ! {
     unsafe {
         cafeos_sys::OSPanic(
             filename.as_ptr() as *const c_char,
-            line as u32,
+            line,
             message.as_ptr() as *const c_char,
         );
+        unreachable_unchecked()
     };
-    loop {}
+}
+
+pub fn fatal(msg: &CStr) -> ! {
+    unsafe {
+        cafeos_sys::OSFatal(msg.as_ptr());
+        unreachable_unchecked()
+    }
 }
 
 #[alloc_error_handler]
 fn alloc_error(_layout: Layout) -> ! {
-    let message = ArrayCString::<[_; 32]>::from("alloc_error");
-    unsafe {
-        cafeos_sys::OSFatal(message.as_ptr() as *const c_char);
-    }
-    loop {}
+    fatal(c"alloc_error")
 }

@@ -43,7 +43,6 @@ fn main() {
         .blocklist_type("MEMHeapHeader")
         .default_enum_style(bindgen::EnumVariation::NewType{ is_bitfield: true, is_global: false })
         .use_core()
-        .ctypes_prefix("cty")
         .detect_include_paths(false)
         .clang_arg("-nostdinc")
         .clang_arg("--sysroot=/opt/devkitpro/devkitPPC/powerpc-eabi")
