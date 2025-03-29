@@ -41,7 +41,7 @@ fn main() {
         .header("src/ffi/cafe.h")
         .blocklist_type("OSSpinLock") //see lib.rs
         .blocklist_type("MEMHeapHeader")
-        .default_enum_style(bindgen::EnumVariation::NewType{ is_bitfield: true })
+        .default_enum_style(bindgen::EnumVariation::NewType{ is_bitfield: true, is_global: false })
         .use_core()
         .ctypes_prefix("cty")
         .detect_include_paths(false)
@@ -50,7 +50,7 @@ fn main() {
         .clang_arg("-Iext/wut/include")
         .clang_arg("-I/opt/devkitpro/devkitPPC/powerpc-eabi/include")
         .clang_arg(format!("-I{}", libgcc.join("include").to_str().unwrap()))
-        .parse_callbacks(Box::new(bindgen::CargoCallbacks))
+        .parse_callbacks(Box::new(bindgen::CargoCallbacks::new()))
         .generate()
         .expect("Unable to generate Cafe bindings");
 

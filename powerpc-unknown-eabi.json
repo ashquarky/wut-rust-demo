@@ -1,7 +1,7 @@
 {
     "arch": "powerpc",
     "cpu": "750",
-    "data-layout": "E-m:e-p:32:32-i64:64-n32",
+    "data-layout": "E-m:e-p:32:32-Fn32-i64:64-n32",
     "dynamic-linking": false,
     "executables": true,
     "has-thread-local": false,
@@ -18,12 +18,8 @@
             "--emit-relocs",
             "-znocopyreloc",
             "--entry=main",
-            "-Tcafe.ld"
-        ]
-    },
-    "post-link-args": {
-        "ld.lld": [
-
+            "-Tcafe.ld",
+            "-no-warn-mismatch"
         ]
     },
     "panic-strategy": "abort",
