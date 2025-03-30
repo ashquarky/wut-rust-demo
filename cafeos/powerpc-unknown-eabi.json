@@ -5,7 +5,6 @@
     "dynamic-linking": false,
     "executables": true,
     "emit-debug-gdb-scripts": false,
-    "has-thread-local": false,
     "has-rpath": true,
     "llvm-target": "powerpc-unknown-eabi",
     "linker": "rust-lld",

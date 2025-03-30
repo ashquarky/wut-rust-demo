@@ -1,5 +1,13 @@
-#!/bin/sh
+#!/bin/bash
+set -euo pipefail
 
-cargo +nightly build --release
-/opt/devkitpro/devkitPPC/bin/powerpc-eabi-strip -g target/powerpc-unknown-eabi/release/wut-rust-demo
-elf2rpl target/powerpc-unknown-eabi/release/wut-rust-demo wut-rust-demo.rpx
+TYPE=debug
+
+if [ "$TYPE" == "debug" ]; then
+  cargo build
+else
+  cargo build --release
+fi
+
+/opt/devkitpro/devkitPPC/bin/powerpc-eabi-strip -g -o wut-rust-demo.strip.elf "target/powerpc-unknown-eabi/$TYPE/wut-rust-demo"
+elf2rpl wut-rust-demo.strip.elf wut-rust-demo.rpx

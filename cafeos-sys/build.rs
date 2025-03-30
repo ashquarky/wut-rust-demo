@@ -50,6 +50,7 @@ fn main() {
         .clang_arg("-I/opt/devkitpro/devkitPPC/powerpc-eabi/include")
         .clang_arg(format!("-I{}", libgcc.join("include").to_str().unwrap()))
         .parse_callbacks(Box::new(bindgen::CargoCallbacks::new()))
+        .wrap_unsafe_ops(true) // for rust 2024
         .generate()
         .expect("Unable to generate Cafe bindings");
 

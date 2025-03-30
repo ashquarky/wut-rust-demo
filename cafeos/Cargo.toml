@@ -8,6 +8,6 @@ edition = "2024"
 cafeos-sys = { path = "../cafeos-sys" }
 
 [dependencies.arrayvec]
-version = "0.5.2"
+version = "0.7.6"
 default-features = false
 

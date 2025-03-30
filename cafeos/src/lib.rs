@@ -5,6 +5,8 @@ pub mod screen;
 
 #[macro_use]
 pub mod runtime;
+mod stack_c_string;
+pub mod log;
 
 #[global_allocator]
 static GLOBAL_ALLOCATOR: runtime::MEMDefaultHeapAllocator = runtime::MEMDefaultHeapAllocator;

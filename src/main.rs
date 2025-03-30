@@ -2,6 +2,7 @@
 #![feature(start)]
 
 use cafeos as _;
+use cafeos::log;
 use cafeos::screen::OSScreen;
 
 unsafe extern "C" fn save_callback() {
@@ -12,8 +13,8 @@ unsafe extern "C" fn save_callback() {
 fn main(_argc: isize, _argv: *const *const u8) -> isize {
     unsafe {
         cafeos_sys::ProcUIInit(Some(save_callback));
-        cafeos_sys::OSReport("owo\0".as_ptr() as *const cty::c_char);
     }
+    log::report(c"hello!");
 
     let screen = OSScreen::init().unwrap();
 
@@ -38,8 +39,9 @@ fn main(_argc: isize, _argv: *const *const u8) -> isize {
 
     unsafe {
         cafeos_sys::ProcUIShutdown();
-        //cafeos_sys::OSFatal("oh dear\0".as_ptr() as *const cty::c_char);
     }
+
+    log::report(c"bye!");
 
     0
 }

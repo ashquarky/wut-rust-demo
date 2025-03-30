@@ -1,14 +1,13 @@
 extern crate alloc;
-use arrayvec::{Array, ArrayString};
 use core::{
     alloc::{GlobalAlloc, Layout},
     cmp,
-    ops::Deref,
     panic::PanicInfo,
 };
-use core::ffi::{c_char, c_void};
+use core::ffi::{c_void};
 use core::ffi::CStr;
 use core::hint::unreachable_unchecked;
+use crate::stack_c_string::StackCString;
 
 // Default allocator implementation
 pub struct MEMDefaultHeapAllocator;
@@ -21,40 +20,6 @@ unsafe impl GlobalAlloc for MEMDefaultHeapAllocator {
 
     unsafe fn dealloc(&self, ptr: *mut u8, _layout: Layout) {
         unsafe { cafeos_sys::MEMFreeToDefaultHeap.unwrap()(ptr as *mut c_void); }
-    }
-}
-
-fn str_truncate_valid(s: &str, mut mid: usize) -> &str {
-    loop {
-        if let Some(res) = s.get(..mid) {
-            return res;
-        }
-        mid -= 1;
-    }
-}
-
-#[derive(Debug, PartialEq)]
-struct ArrayCString<A: Array<Item = u8> + Copy> {
-    inner: ArrayString<A>,
-}
-
-impl<S: AsRef<str>, A: Array<Item = u8> + Copy> From<S> for ArrayCString<A> {
-    fn from(s: S) -> Self {
-        let s = s.as_ref();
-        let len = cmp::min(s.len(), A::CAPACITY - 1);
-        let mut result = Self {
-            inner: ArrayString::from(str_truncate_valid(s, len)).unwrap(),
-        };
-        result.inner.push('\0');
-        result
-    }
-}
-
-impl<A: Array<Item = u8> + Copy> Deref for ArrayCString<A> {
-    type Target = str;
-
-    fn deref(&self) -> &str {
-        self.inner.as_str()
     }
 }
 
@@ -74,13 +39,13 @@ fn panic_handler(info: &PanicInfo) -> ! {
 
     // Copy the message and filename to the stack in order to safely add
     // a terminating nul character (since rust strings don't come with one).
-    let message = ArrayCString::<[_; 256]>::from(message);
-    let filename = ArrayCString::<[_; 128]>::from(filename);
+    let message = StackCString::<256>::from(message);
+    let filename = StackCString::<128>::from(filename);
     unsafe {
         cafeos_sys::OSPanic(
-            filename.as_ptr() as *const c_char,
+            filename.c_str().as_ptr(),
             line,
-            message.as_ptr() as *const c_char,
+            message.c_str().as_ptr(),
         );
         unreachable_unchecked()
     };
