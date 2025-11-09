@@ -1,16 +1,16 @@
 #![no_std]
-#![feature(start)]
+#![no_main]
 
 use cafeos as _;
 use cafeos::log;
 use cafeos::screen::OSScreen;
 
-unsafe extern "C" fn save_callback() {
-    cafeos_sys::OSSavesDone_ReadyToRelease();
+extern "C" fn save_callback() {
+    unsafe { cafeos_sys::OSSavesDone_ReadyToRelease(); }
 }
 
-#[start]
-fn main(_argc: isize, _argv: *const *const u8) -> isize {
+#[unsafe(no_mangle)]
+fn entry(_argc: isize, _argv: *const *const u8) -> isize {
     unsafe {
         cafeos_sys::ProcUIInit(Some(save_callback));
     }
